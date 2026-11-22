@@ -206,11 +206,11 @@
   function plan(unit, v) {
     const a = Math.abs(v);
     switch (unit) {
-      case 'in': return a < 0.4 ? ['mm'] : a < 100 ? ['cm', a < 4 ? 'mm' : a >= 40 ? 'm' : null] : ['m', 'cm'];
-      case 'ft': return a < 10 ? ['cm', 'm'] : ['m'];
-      case 'ftin': return ['cm', 'm'];
-      case 'yd': return ['m'];
-      case 'mi': return ['km'];
+      case 'in': return a < 0.4 ? ['mm', 'cm', 'm'] : a < 100 ? ['cm', 'mm', 'm'] : ['m', 'cm', 'mm'];
+      case 'ft': return a < 10 ? ['cm', 'mm', 'm'] : ['m', 'cm', 'mm'];
+      case 'ftin': return ['cm', 'mm', 'm'];
+      case 'yd': return ['m', 'cm', 'mm'];
+      case 'mi': return ['km', 'm'];
       case 'mm': return ['in', 'frac'];
       case 'cm': return a >= 90 ? ['in', 'ftin'] : a < 30 ? ['in', 'frac'] : ['in'];
       case 'm': return a < 3 ? ['ftin', 'in'] : ['ft'];
@@ -244,7 +244,7 @@
     switch (unit) {
       case 'mm': return a < 10 ? 2 : a < 100 ? 1 : 0;
       case 'cm': return a < 10 ? 2 : 1;
-      case 'm': return a < 100 ? 2 : 1;
+      case 'm': return a < 1 ? 3 : a < 100 ? 2 : a < 1000 ? 1 : 0;
       case 'km': case 'mi': return a < 10 ? 2 : a < 1000 ? 1 : 0;
       case 'in': return a < 1 ? 3 : a < 10 ? 2 : 1;
       case 'ft': return a < 100 ? 1 : 0;
@@ -314,7 +314,7 @@
     const vals = q.values || [q.value];
     const fromUnit = q.unit === 'ftin' ? 'in' : q.unit;
     let targets = plan(q.unit, Math.max(...vals.map(Math.abs))).filter(Boolean);
-    if (q.dims) targets = [targets[0] === 'ftin' ? 'in' : targets[0]];
+    if (q.dims) targets = targets.filter(t => t !== 'frac').map(t => (t === 'ftin' ? 'in' : t)).filter((t, i, all) => all.indexOf(t) === i);
     const shown = targets.map(t => show(vals, t, fromUnit, joinWith(q))).filter(Boolean);
     return { kind: q.kind, from: sourceText(q), main: shown[0], more: shown.slice(1), copy: shown[0] };
   }
