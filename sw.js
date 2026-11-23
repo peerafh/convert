@@ -1,6 +1,6 @@
 // Convert: keeps the app working offline. Exchange rates are saved by the page itself.
 // Bump VERSION whenever any file changes so phones and Macs pick up the update.
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = 'convert-' + VERSION;
 const FILES = [
   './',

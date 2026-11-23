@@ -305,7 +305,9 @@
     const out = vals.map(v => v / R[from] * R[to]);
     const main = SIGN[to] + out.map(v => money(v, to)).join('–');
     const note = from === 'THB' ? '1 USD = ' + rateText(R.THB / R.USD) + ' THB' : '1 ' + from + ' = ' + rateText(R.THB / R[from]) + ' THB';
-    return Object.assign(base, { main, unit: to, note, copy: out.map(v => money(v, to)).join('–') + ' ' + to });
+    let more = [];
+    if (from === 'EUR') more = ['$' + vals.map(v => money(v / R.EUR, 'USD')).join('–')];
+    return Object.assign(base, { main, unit: to, note, more, copy: out.map(v => money(v, to)).join('–') + ' ' + to });
   }
 
   /* ---------- one result per amount found ---------- */
